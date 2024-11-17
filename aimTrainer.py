@@ -6,7 +6,7 @@ import time
 pygame.init()
 
 # Constants
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1080, 720
 FPS = 80
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -15,12 +15,12 @@ pygame.display.set_caption("Aim Trainer")
 TARGET_INCREMENT = 500
 TARGET_EVENT = pygame.USEREVENT
 TARGET_PADDING = 50
-BG_COLOR = (0, 25, 40)
+BG_COLOR = (0, 75, 40)
 LIVES = 5
 TOP_BAR_HEIGHT = 40
 
 MAX_TARGETS = 5  # Limit number of targets on screen
-LABEL_FONT = pygame.font.SysFont("monospaced", 28)
+LABEL_FONT = pygame.font.SysFont("monospaced", 32)
 HEADING_FONT = pygame.font.SysFont("sansserif", 64, bold=True)
 END_FONT = pygame.font.SysFont("sansserif", 32, bold=True)
 
@@ -30,13 +30,12 @@ miss_sound = pygame.mixer.Sound(r"D:\Projects\Project 1\miss.wav")
 
 # Difficulty settings
 DIFFICULTY = {
-    'easy': {'size': 40, 'growth_rate': 0.2},
+    'easy': {'size': 50, 'growth_rate': 0.3},
     'medium': {'size': 30, 'growth_rate': 0.3},
     'hard': {'size': 25, 'growth_rate': 0.4}
 }
 
 def draw_gradient_background(win, color1, color2):
-    """Create a gradient background from color1 to color2."""
     for i in range(HEIGHT):
         blend_color = [
             color1[j] + (color2[j] - color1[j]) * i // HEIGHT for j in range(3)
@@ -79,25 +78,25 @@ def format_time(secs):
     return f"{minutes:02d}:{seconds:02d}.{milli}"
 
 def draw_top_bar(win, elapsed_time, targets_pressed, misses):
-    pygame.draw.rect(win, "aqua", (0, 0, WIDTH, TOP_BAR_HEIGHT))
-    time_label = LABEL_FONT.render(f"Time : {format_time(elapsed_time)}", 1, "black")
+    pygame.draw.rect(win, "purple", (0, 0, WIDTH, TOP_BAR_HEIGHT))
+    time_label = LABEL_FONT.render(f"Time : {format_time(elapsed_time)}", 1, "white")
     speed = round(targets_pressed / elapsed_time, 1) if elapsed_time > 0 else 0
-    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "black")
-    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")
-    lives_label = LABEL_FONT.render(f"Lives: {LIVES - misses}", 1, "black")
+    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "white")
+    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "white")
+    lives_label = LABEL_FONT.render(f"Lives: {LIVES - misses}", 1, "white")
 
-    win.blit(time_label, (5, 10))
+    win.blit(time_label, (50, 10))
     win.blit(speed_label, (250, 10))
     win.blit(hits_label, (500, 10))
     win.blit(lives_label, (700, 10))
 
 def draw(win, targets):
-    draw_gradient_background(win, (0, 25, 40), (0, 0, 80))  # Gradient background
+    draw_gradient_background(win, (30, 25, 40), (30, 0, 80))  # Gradient background
     for target in targets:
         target.draw(win)
 
 def end_screen(win, elapsed_time, targets_pressed, clicks):
-    draw_gradient_background(win, (0, 25, 40), (0, 0, 80))
+    draw_gradient_background(win, (30, 25, 40), (30, 0, 80))
     time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "white")
     speed = round(targets_pressed / elapsed_time, 1) if elapsed_time > 0 else 0
     speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "white")
@@ -130,13 +129,14 @@ def get_middle(surface):
     return WIDTH / 2 - surface.get_width() / 2
 
 def main_menu(win):
-    draw_gradient_background(win, (0, 25, 40), (0, 0, 80))  # Gradient background
-    title_label = HEADING_FONT.render("Aim Trainer", 1, (0, 255, 255))
+    draw_gradient_background(win, (30, 25, 40), (30, 0, 80))  # Gradient background
+    title_label = HEADING_FONT.render("Aim Trainer", 1, (155, 0, 255))
     instructions_label = LABEL_FONT.render("Press [E] for Easy, [M] for Medium, [H] for Hard", 1, "white")
+    restart_label = LABEL_FONT.render(f"Press Q to Quit", 1, "white")
     
     win.blit(title_label, (get_middle(title_label), 150))
     win.blit(instructions_label, (get_middle(instructions_label), 300))
-    
+    win.blit(restart_label, (get_middle(restart_label), 500))
     pygame.display.update()
 
     difficulty = None
@@ -151,6 +151,8 @@ def main_menu(win):
                     difficulty = 'medium'
                 elif event.key == pygame.K_h:
                     difficulty = 'hard'
+                elif event.key == pygame.K_q:
+                    quit()  # Quit
     
     main(difficulty)
 
